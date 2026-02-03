@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Generation Results - JD2Q{% endblock %}
+
+{% block extra_head %}
+<style>
+    .question-card:hover .copy-btn {
+        opacity: 1;
+    }
+
+    .signal-pill {
+        background: rgba(255, 255, 255, 0.05);
+        color: #a1a1aa;
+        font-size: 0.7rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        padding: 0.2rem 0.6rem;
+        display: inline-block;
+        margin-right: 0.4rem;
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-slate-200">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-8">
+        <div>
+            <nav class="flex mb-4" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                    <li><a href="{{ url_for('web.dashboard') }}"
+                            class="hover:text-indigo-400 transition-colors">Dashboard</a></li>
+                    <li><svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
+                        </svg></li>
+                    <li class="text-indigo-400">Results</li>
+                </ol>
+            </nav>
+            <h1 class="text-4xl font-bold text-white tracking-tight mb-3">Generation Results</h1>
+            <div class="flex flex-wrap gap-3 items-center">
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                    {{ generation.role_level }}
+                </span>
+                <span class="text-slate-700">/</span>
+                <span class="text-sm font-medium text-slate-400">{{ total_questions }} questions generated</span>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <div class="flex bg-white/5 p-1 rounded-xl border border-white/5">
+                <a href="{{ url_for('history.export_json', gen_id=generation.id) }}"
+                    class="px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 transition-all">
+                    JSON
+                </a>
+                <a href="{{ url_for('history.export_pdf', gen_id=generation.id) }}"
+                    class="px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-white/5 transition-all"
+                    target="_blank">
+                    PDF
+                </a>
+            </div>
+
+            <form action="{{ url_for('generation.regenerate', gen_id=generation.id) }}" method="POST" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="h-full px-5 py-2.5 border border-white/10 rounded-xl text-xs font-bold text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                    onclick="return confirm('Generate a fresh set of questions from the same JD? This will use your API quota.')">
+                    Regenerate
+                </button>
+            </form>
+
+            <a href="{{ url_for('generation.index') }}"
+                class="px-6 py-2.5 bg-indigo-600 rounded-xl text-xs font-bold text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/20">
+                New Session
+            </a>
+        </div>
+    </div>
+
+    <!-- Skills Summary -->
+    <div class="glass-card rounded-2xl border border-white/5 p-8 mb-12 shadow-2xl">
+        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-6">Identified Expertise Focal Points
+        </h3>
+        <div class="flex flex-wrap gap-3">
+            {% for skill in generation.extracted_skills %}
+            <span class="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-slate-300 text-xs font-bold">{{
+                skill }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Questions by Section -->
+    <div class="space-y-16">
+        {% for section_title, section_questions in sections.items() %}
+        <div>
+            <div class="flex items-center mb-10">
+                <h2 class="text-2xl font-bold text-white tracking-tight">{{ section_title }}</h2>
+                <div class="flex-grow ml-8 h-px bg-white/5"></div>
+                <span class="ml-8 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">{{
+                    section_questions|length }} Entries</span>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                {% for question in section_questions %}
+                <div class="glass-card border border-white/5 rounded-2xl overflow-hidden transition-all hover:border-white/10 group"
+                    id="q-{{ question.id }}">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex gap-2">
+                                <span
+                                    class="px-2.5 py-1 text-[10px] uppercase font-black rounded-lg bg-white/5 text-slate-500 border border-white/5">{{
+                                    question.question_type or 'General' }}</span>
+                                <span class="px-2.5 py-1 text-[10px] uppercase font-black rounded-lg border 
+                                    {% if question.difficulty == 'Senior' %}bg-rose-500/10 text-rose-400 border-rose-500/20
+                                    {% elif question.difficulty == 'Mid-level' %}bg-amber-500/10 text-amber-400 border-amber-500/20
+                                    {% else %}bg-emerald-500/10 text-emerald-400 border-emerald-500/20{% endif %}">
+                                    {{ question.difficulty or 'Mid' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h4 class="text-xl text-white font-bold leading-snug mb-8">{{ question.question_text }}</h4>
+
+                        <div class="mb-8">
+                            <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-4">Response
+                                Vectors</p>
+                            <div class="flex flex-wrap">
+                                {% for signal in question.expected_signals %}
+                                <span class="signal-pill">{{ signal }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="border-t border-white/5 pt-6 flex justify-between items-center">
+                            <button onclick="getAnswer('{{ question.id }}')"
+                                class="text-indigo-400 hover:text-indigo-300 text-xs font-bold flex items-center transition-all">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span id="btn-text-{{ question.id }}">Reveal Model Matrix</span>
+                            </button>
+                            <div class="flex space-x-4">
+                                <button onclick="toggleFavorite('{{ question.id }}')"
+                                    class="text-slate-600 hover:text-rose-500 transition-all transform hover:scale-110"
+                                    title="Favorite" id="fav-btn-{{ question.id }}">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button onclick="copyQuestion('{{ question.id }}')"
+                                    class="text-slate-600 hover:text-white transition-all transform hover:scale-110"
+                                    title="Copy Text">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="answer-container-{{ question.id }}"
+                            class="hidden mt-8 p-6 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 shadow-inner">
+                            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-4">Baseline
+                                Reference Answer</p>
+                            <div id="answer-text-{{ question.id }}"
+                                class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap font-medium"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function getAnswer(questionId) {
+        const btnText = document.getElementById(`btn-text-${questionId}`);
+        const container = document.getElementById(`answer-container-${questionId}`);
+        const textElement = document.getElementById(`answer-text-${questionId}`);
+
+        if (!container.classList.contains('hidden')) {
+            container.classList.add('hidden');
+            btnText.textContent = 'Reveal Model Matrix';
+            return;
+        }
+
+        if (textElement.textContent.trim()) {
+            container.classList.remove('hidden');
+            btnText.textContent = 'Hide Matrix';
+            return;
+        }
+
+        btnText.textContent = 'Computing...';
+
+        try {
+            const response = await fetch(`/generate/answer/${questionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.answer) {
+                textElement.textContent = data.answer;
+                container.classList.remove('hidden');
+                btnText.textContent = 'Hide Matrix';
+            } else {
+                alert('Connection Error: ' + (data.error || 'Failed to retrieve signal'));
+                btnText.textContent = 'Reveal Model Matrix';
+            }
+        } catch (error) {
+            alert('Hardware Interrupt: Connection to AI core lost.');
+            btnText.textContent = 'Reveal Model Matrix';
+        }
+    }
+
+    function copyQuestion(questionId) {
+        const card = document.getElementById(`q-${questionId}`);
+        const text = card.querySelector('h4').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            // Optional: Simple toast instead of alert
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-2 rounded-full text-xs font-bold shadow-2xl z-50 animate-bounce';
+            notification.textContent = 'Copied to clipboard';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        });
+    }
+
+    async function toggleFavorite(questionId) {
+        const btn = document.getElementById(`fav-btn-${questionId}`);
+        const icon = btn.querySelector('svg');
+
+        try {
+            const response = await fetch(`/favorite/${questionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.favored) {
+                icon.setAttribute('fill', 'currentColor');
+                btn.classList.add('text-rose-500');
+                btn.classList.remove('text-slate-600');
+            } else {
+                icon.setAttribute('fill', 'none');
+                btn.classList.add('text-slate-600');
+                btn.classList.remove('text-rose-500');
+            }
+        } catch (error) {
+            console.error('Core Logic Error:', error);
+        }
+    }
+</script>
+{% endblock %}

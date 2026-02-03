@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Authenticating - JD2Q{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 relative overflow-hidden">
+    <!-- Subtle Glow -->
+    <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none">
+    </div>
+
+    <div class="text-center relative z-10">
+        <div class="relative w-16 h-16 mx-auto mb-6">
+            <div class="absolute inset-0 rounded-full border-4 border-white/5"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin">
+            </div>
+        </div>
+        <h2 class="text-xl font-bold text-white mb-2">Finalizing Authentication</h2>
+        <p class="text-slate-400">Securely establishing your session...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Extract access token from URL hash (Supabase OAuth callback)
+    window.addEventListener('load', function () {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        const error = params.get('error');
+
+        if (error) {
+            console.error('OAuth Error:', error);
+            window.location.href = '{{ url_for("auth.login") }}?error=' + encodeURIComponent(error);
+            return;
+        }
+
+        if (accessToken) {
+            // Send token to backend to establish session
+            fetch('{{ url_for("auth.set_session") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ access_token: accessToken })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Session setup failed: ' + data.error);
+                        window.location.href = '{{ url_for("auth.login") }}';
+                    } else {
+                        window.location.href = data.redirect;
+                    }
+                })
+                .catch(error => {
+                    alert('An error occurred: ' + error);
+                    window.location.href = '{{ url_for("auth.login") }}';
+                });
+        } else {
+            // No token found
+            alert('No authentication token received');
+            window.location.href = '{{ url_for("auth.login") }}';
+        }
+    });
+</script>
+{% endblock %}

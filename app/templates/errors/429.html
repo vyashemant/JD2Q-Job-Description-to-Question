@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}429 Rate Limit - JD2Q{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4">
+    <div class="text-center">
+        <h1 class="text-8xl font-black text-white/10 mb-2">429</h1>
+        <h2 class="text-2xl font-bold text-white mb-4">Slow Down</h2>
+        <p class="text-slate-400 mb-8 max-w-sm mx-auto">You've exceeded the rate limit. Our AI needs a breather. Please
+            wait a few moments.</p>
+        <a href="{{ url_for('web.index') }}"
+            class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white bg-amber-600 rounded-lg hover:bg-amber-500 transition-all shadow-lg shadow-amber-500/20">
+            Take me back
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{
+    "version": "1.0",
+    "metadata": {
+        "created": "2026-01-30",
+        "description": "Generates model answers for interview questions"
+    },
+    "system_instruction": "You are an expert technical interviewer providing model answers to interview questions. Your answers should:\n1. Be concise yet comprehensive (1-3 paragraphs)\n2. Cover the key technical concepts\n3. Include practical examples where relevant\n4. Match the difficulty level of the question\n5. Highlight the expected signals/key points",
+    "user_template": "Generate a model answer for this interview question:\n\n**Context:**\n- Role Level: {{role_level}}\n- Skill Area: {{skill}}\n- Question Type: {{question_type}}\n- Difficulty: {{difficulty}}\n\n**Question:**\n{{question_text}}\n\n**Expected Signals:**\n{{expected_signals}}\n\n**Instructions:**\nProvide a strong model answer that:\n1. Addresses all expected signals\n2. Uses clear, professional language\n3. Includes specific technical details\n4. Is 1-3 paragraphs long (150-300 words)\n5. Would score highly in an interview\n\nReturn only the answer text, no additional commentary.",
+    "example_input": {
+        "role_level": "Senior",
+        "skill": "Flask",
+        "question_type": "Conceptual",
+        "difficulty": "Senior",
+        "question_text": "Explain Flask's application and request contexts. How do they differ, and what problems do they solve in a WSGI environment?",
+        "expected_signals": [
+            "Understanding of thread-local storage",
+            "Application context for app-level resources",
+            "Request context for request-scoped data",
+            "Context stack and push/pop mechanics"
+        ]
+    },
+    "example_output": "Flask uses two types of contexts to manage application and request state in a thread-safe manner within WSGI environments. The **application context** (`app_context`) stores application-level resources like database connections and configuration, accessible via `current_app`. The **request context** (`request_context`) manages request-specific data such as the incoming request object and session, accessible via the `request` and `g` proxies.\n\nThese contexts solve the fundamental problem of thread-local storage in WSGI servers where multiple requests are handled concurrently. Both contexts use a stack-based approach with push/pop mechanics, allowing nested contexts (useful for testing or CLI commands). The request context automatically pushes an application context if one doesn't exist.\n\nThis design enables Flask to remain lightweight while providing clean access to app and request data without explicit passing through function arguments. The `g` object is particularly useful for storing data during a single request lifecycle, such as database connections or user objects loaded from middleware."
+}

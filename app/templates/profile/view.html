@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Identity // JD2Q{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-6 py-20 reveal">
+    <header class="mb-16">
+        <div class="mono text-[10px] uppercase tracking-[0.3em] text-indigo-400 mb-4 font-bold flex items-center">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
+            Identity Core // User Profile
+        </div>
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2">System Profile</h1>
+        <p class="text-slate-400 max-w-lg">Management interface for your unique identifier and ecosystem preferences.
+        </p>
+    </header>
+
+    <div class="glass-card rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+        <div class="px-10 py-6 border-b border-white/5 bg-white/[0.02] flex justify-between items-center">
+            <h2 class="mono text-xs uppercase tracking-[0.2em] font-bold text-slate-500">Core Biometrics</h2>
+            <a href="{{ url_for('profile.edit') }}"
+                class="mono text-[10px] uppercase tracking-widest text-indigo-400 hover:text-indigo-300 font-extrabold transition-colors">
+                Modify Identity
+            </a>
+        </div>
+        <div class="p-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="space-y-2">
+                    <label class="block mono text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">Designative
+                        Name</label>
+                    <p class="text-xl font-extrabold text-white tracking-tight">{{ user.display_name or 'Anonymous
+                        Entity' }}</p>
+                </div>
+                <div class="space-y-2">
+                    <label class="block mono text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">Digital
+                        Address</label>
+                    <p class="text-xl font-extrabold text-white tracking-tight">{{ user.email }}</p>
+                </div>
+                <div class="space-y-2">
+                    <label class="block mono text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">Initial
+                        Activation</label>
+                    <p class="text-xl font-extrabold text-white tracking-tight">{{ user.created_at[:10] if
+                        user.created_at else 'NULL' }}</p>
+                </div>
+                <div class="space-y-2">
+                    <label
+                        class="block mono text-[9px] font-bold text-slate-600 uppercase tracking-[0.3em]">Authentication
+                        Status</label>
+                    <div class="flex items-center gap-3">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]">
+                        </div>
+                        <p class="text-xl font-extrabold text-emerald-400 tracking-tight">Active // Verified</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Matrix -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <a href="{{ url_for('profile.keys') }}"
+            class="glass-card p-10 rounded-2xl border border-white/5 hover:border-indigo-500/30 transition-all group relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
+                <svg class="w-24 h-24 text-indigo-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-2H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                </svg>
+            </div>
+            <div
+                class="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-8 group-hover:scale-110 transition-transform duration-500">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+            </div>
+            <h3 class="font-extrabold text-white text-2xl mb-4">Encryption Keys</h3>
+            <p class="text-sm text-slate-500 mb-8 leading-relaxed max-w-xs">Manage secure credentials and token rotation
+                configurations.</p>
+            <div
+                class="mono text-[10px] uppercase font-bold tracking-[0.2em] text-indigo-400 flex items-center group-hover:gap-4 transition-all">
+                Registry Access
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </div>
+        </a>
+
+        <a href="{{ url_for('history.index') }}"
+            class="glass-card p-10 rounded-2xl border border-white/5 hover:border-purple-500/30 transition-all group relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-10 transition-opacity">
+                <svg class="w-24 h-24 text-purple-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
+                </svg>
+            </div>
+            <div
+                class="w-14 h-14 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-8 group-hover:scale-110 transition-transform duration-500">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3 class="font-extrabold text-white text-2xl mb-4">Historical Archives</h3>
+            <p class="text-sm text-slate-500 mb-8 leading-relaxed max-w-xs">Review and retrieve generation sequences
+                from the encrypted logs.</p>
+            <div
+                class="mono text-[10px] uppercase font-bold tracking-[0.2em] text-purple-400 flex items-center group-hover:gap-4 transition-all">
+                Sequence Retrieval
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .mono {
+        font-family: 'Space Mono', 'Fira Code', monospace;
+    }
+</style>
+{% endblock %}

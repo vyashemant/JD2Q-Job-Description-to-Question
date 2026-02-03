@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}History - JD2Q{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+        <div>
+            <h1 class="text-4xl font-bold text-white tracking-tight mb-2">Generation Archive</h1>
+            <p class="text-slate-400 font-medium">Review and manage your historical interview preparation sessions.</p>
+        </div>
+        <a href="{{ url_for('generation.index') }}"
+            class="inline-flex items-center justify-center px-6 py-3 text-sm font-bold text-white transition-all duration-300 gradient-bg rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:-translate-y-0.5">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Start New Session
+        </a>
+    </div>
+
+    <div class="glass-card rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-white/5">
+                <thead class="bg-white/5">
+                    <tr>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Timestamp</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Context Level</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Key Verticals</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Status</th>
+                        <th scope="col"
+                            class="px-6 py-4 text-right text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            Session Access</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5 bg-black/10">
+                    {% for gen in generations %}
+                    <tr class="hover:bg-white/5 transition-colors group">
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            <div class="text-sm font-bold text-white mb-1">{{ gen.created_at[:10] }}</div>
+                            <div class="text-[10px] text-slate-500 font-mono tracking-widest">{{ gen.created_at[11:16]
+                                }}</div>
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            {% if gen.role_level %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider
+                                {% if 'Senior' in gen.role_level %}bg-rose-500/10 text-rose-400 border border-rose-500/20
+                                {% elif 'Mid' in gen.role_level %}bg-indigo-500/10 text-indigo-400 border border-indigo-500/20
+                                {% else %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20{% endif %}">
+                                {{ gen.role_level }}
+                            </span>
+                            {% else %}
+                            <span class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-5">
+                            <div class="flex flex-wrap gap-2">
+                                {% for skill in (gen.extracted_skills or [])[:3] %}
+                                <span
+                                    class="px-2 py-0.5 rounded bg-white/5 border border-white/5 text-slate-400 text-[10px] font-bold tracking-tight">
+                                    {{ skill }}
+                                </span>
+                                {% endfor %}
+                                {% if gen.extracted_skills and gen.extracted_skills|length > 3 %}
+                                <span class="text-[10px] text-slate-600 font-bold self-center">+{{
+                                    gen.extracted_skills|length - 3 }}</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap">
+                            <span class="inline-flex items-center text-[10px] font-black uppercase tracking-widest
+                                {% if gen.status == 'completed' %}text-emerald-500
+                                {% elif gen.status == 'failed' %}text-rose-500
+                                {% else %}text-amber-500 animate-pulse{% endif %}">
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-current mr-2 shadow-[0_0_8px_currentColor]"></span>
+                                {{ gen.status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5 whitespace-nowrap text-right">
+                            {% if gen.status == 'completed' %}
+                            <div class="flex items-center justify-end space-x-6">
+                                <a href="{{ url_for('history.view', gen_id=gen.id) }}"
+                                    class="text-indigo-400 hover:text-indigo-300 text-xs font-black uppercase tracking-widest transition-colors">
+                                    View
+                                </a>
+                                <a href="{{ url_for('history.export_pdf', gen_id=gen.id) }}"
+                                    class="text-slate-500 hover:text-white transition-colors" title="Export PDF"
+                                    target="_blank">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </div>
+                            {% else %}
+                            <span class="text-slate-600 text-[10px] font-bold uppercase tracking-widest">In
+                                Pipeline</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not generations %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-32 text-center">
+                            <div
+                                class="inline-flex items-center justify-center w-16 h-16 bg-white/5 rounded-2xl border border-white/5 mb-6">
+                                <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Archive Empty</h3>
+                            <p class="text-slate-500 mb-8 max-w-sm mx-auto">You haven't generated any interview material
+                                yet. Start your first session to build your archive.</p>
+                            <a href="{{ url_for('generation.index') }}"
+                                class="text-indigo-400 font-black uppercase tracking-[0.2em] text-xs hover:text-indigo-300">Initialize
+                                Library &rarr;</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Footer Info -->
+        <div
+            class="bg-white/5 px-8 py-4 border-t border-white/5 text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em]">
+            Archive Depth: {{ generations|length }} Persistent Records
+        </div>
+    </div>
+</div>
+{% endblock %}

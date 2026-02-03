@@ -1,0 +1,181 @@
+{
+    "version": "1.0",
+    "metadata": {
+        "created": "2026-01-30",
+        "description": "Generates interview questions from job descriptions with strict JSON schema",
+        "minimum_questions": 15
+    },
+    "system_instruction": "You are an expert technical interviewer and hiring manager with deep expertise across all technology domains. Your task is to analyze job descriptions and generate comprehensive, insightful interview questions that assess candidates' real-world capabilities.\n\nKey principles:\n1. Generate questions that reveal actual understanding, not memorization\n2. Balance conceptual depth with practical application\n3. Ensure questions are appropriate for the role level (Junior/Mid/Senior/Staff)\n4. Focus on skills explicitly mentioned in the JD\n5. Include edge cases and system design for senior roles\n6. Always return valid JSON matching the exact schema provided",
+    "user_template": "Analyze the following job description and generate a minimum of {{min_questions}} high-quality interview questions.\n\n**Job Description:**\n{{job_description}}\n\n**Instructions:**\n1. Extract the role level (Junior, Mid-level, Senior, Staff, etc.)\n2. Identify all technical skills and competencies mentioned\n3. Group questions by skill area (e.g., \"Python\", \"System Design\", \"Databases\")\n4. For each skill, create questions across multiple types:\n   - Conceptual: Test fundamental understanding\n   - Practical: Test hands-on application\n   - Scenario-based: Test problem-solving and decision-making\n   - Debugging: Test troubleshooting skills\n5. Adjust difficulty to match role level\n6. For each question, list 3-5 key signals/points you'd expect in a strong answer\n\n**Output Format:**\nReturn a JSON object with this exact structure:\n{\n  \"role_level\": \"string (Junior|Mid-level|Senior|Staff|Principal)\",\n  \"extracted_skills\": [\"skill1\", \"skill2\", ...],\n  \"sections\": [\n    {\n      \"title\": \"string (e.g., 'Core Framework Knowledge')\",\n      \"skill\": \"string (primary skill for this section)\",\n      \"questions\": [\n        {\n          \"id\": \"string (unique, e.g., 'q1', 'q2')\",\n          \"type\": \"string (Conceptual|Practical|Scenario|Debugging)\",\n          \"difficulty\": \"string (Junior|Mid-level|Senior)\",\n          \"text\": \"string (the actual question)\",\n          \"expected_signals\": [\"signal1\", \"signal2\", ...]\n        }\n      ]\n    }\n  ]\n}\n\n**Critical Requirements:**\n- Minimum {{min_questions}} questions total across all sections\n- All fields are required\n- Questions must be specific and actionable\n- Expected signals should be concrete technical points\n- Return ONLY the JSON object, no additional text",
+    "response_schema": {
+        "type": "object",
+        "required": [
+            "role_level",
+            "extracted_skills",
+            "sections"
+        ],
+        "properties": {
+            "role_level": {
+                "type": "string",
+                "description": "Identified role level from job description",
+                "enum": [
+                    "Junior",
+                    "Mid-level",
+                    "Senior",
+                    "Staff",
+                    "Principal",
+                    "Lead"
+                ]
+            },
+            "extracted_skills": {
+                "type": "array",
+                "description": "List of technical skills extracted from job description",
+                "items": {
+                    "type": "string"
+                },
+                "minItems": 1
+            },
+            "sections": {
+                "type": "array",
+                "description": "Question sections grouped by skill/topic",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "title",
+                        "skill",
+                        "questions"
+                    ],
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Section title"
+                        },
+                        "skill": {
+                            "type": "string",
+                            "description": "Primary skill for this section"
+                        },
+                        "questions": {
+                            "type": "array",
+                            "description": "Questions in this section",
+                            "minItems": 1,
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "id",
+                                    "type",
+                                    "difficulty",
+                                    "text",
+                                    "expected_signals"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "Unique question identifier"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "Question type",
+                                        "enum": [
+                                            "Conceptual",
+                                            "Practical",
+                                            "Scenario",
+                                            "Debugging",
+                                            "System Design"
+                                        ]
+                                    },
+                                    "difficulty": {
+                                        "type": "string",
+                                        "description": "Question difficulty level",
+                                        "enum": [
+                                            "Junior",
+                                            "Mid-level",
+                                            "Senior"
+                                        ]
+                                    },
+                                    "text": {
+                                        "type": "string",
+                                        "description": "The interview question text"
+                                    },
+                                    "expected_signals": {
+                                        "type": "array",
+                                        "description": "Key points expected in a strong answer",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "minItems": 2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "example_output": {
+        "role_level": "Senior",
+        "extracted_skills": [
+            "Python",
+            "Flask",
+            "PostgreSQL",
+            "Redis",
+            "Docker",
+            "AWS"
+        ],
+        "sections": [
+            {
+                "title": "Framework-specific Knowledge",
+                "skill": "Flask",
+                "questions": [
+                    {
+                        "id": "q1",
+                        "type": "Conceptual",
+                        "difficulty": "Senior",
+                        "text": "Explain Flask's application and request contexts. How do they differ, and what problems do they solve in a WSGI environment?",
+                        "expected_signals": [
+                            "Understanding of thread-local storage",
+                            "Application context for app-level resources",
+                            "Request context for request-scoped data",
+                            "Context stack and push/pop mechanics",
+                            "Use cases for current_app and g"
+                        ]
+                    },
+                    {
+                        "id": "q2",
+                        "type": "Practical",
+                        "difficulty": "Senior",
+                        "text": "How would you implement rate limiting in a Flask application that needs to handle 10,000 requests per second?",
+                        "expected_signals": [
+                            "Redis-based token bucket or sliding window",
+                            "Distributed rate limiting considerations",
+                            "Flask-Limiter or custom middleware",
+                            "Performance implications",
+                            "Handling rate limit headers"
+                        ]
+                    }
+                ]
+            },
+            {
+                "title": "Database Design",
+                "skill": "PostgreSQL",
+                "questions": [
+                    {
+                        "id": "q3",
+                        "type": "Scenario",
+                        "difficulty": "Senior",
+                        "text": "You notice a query that performs well in development but times out in production with millions of rows. Walk me through your debugging and optimization process.",
+                        "expected_signals": [
+                            "EXPLAIN ANALYZE usage",
+                            "Index analysis and creation",
+                            "Query plan inspection",
+                            "Partitioning considerations",
+                            "Statistics and vacuum",
+                            "Connection pooling check"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

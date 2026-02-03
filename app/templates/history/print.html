@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Sheet - JD2Q</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: { bg: '#050505', card: '#111111', border: '#222222' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background-color: white;
+            }
+
+            .page-break {
+                page-break-after: always;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+    <div class="max-w-4xl mx-auto bg-white p-12 shadow-lg border rounded-lg">
+        <div class="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Interview Question Sheet</h1>
+                <p class="text-gray-500 mt-1">Role Level: <span class="font-bold text-indigo-600">{{
+                        generation.role_level }}</span></p>
+                <p class="text-gray-500">Date: {{ generation.created_at[:10] }}</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-black text-indigo-600">JD2Q</div>
+                <button onclick="window.print()"
+                    class="no-print mt-4 px-4 py-2 bg-indigo-600 text-white rounded text-sm font-bold shadow-md hover:bg-indigo-700">
+                    Print this Sheet
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-10 p-6 bg-gray-50 rounded-lg border border-gray-100 italic text-gray-600 text-sm">
+            <span class="font-bold uppercase not-italic text-xs block text-gray-400 mb-2">Job Description Context</span>
+            "{{ generation.job_description[:500] }}..."
+        </div>
+
+        <div class="space-y-12">
+            {% for section_title, questions in sections.items() %}
+            <div class="page-break">
+                <h2 class="text-xl font-bold text-gray-900 mb-6 border-l-4 border-indigo-600 pl-4">{{ section_title }}
+                </h2>
+
+                <div class="space-y-8">
+                    {% for q in questions %}
+                    <div class="border-b border-gray-100 pb-8">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ q.question_type
+                                }} &bull; {{ q.difficulty }}</span>
+                        </div>
+                        <p class="text-lg text-gray-900 font-semibold mb-4">{{ q.question_text }}</p>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                    Evaluation Signals</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    {% for signal in q.expected_signals %}
+                                    <span class="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded">{{ signal
+                                        }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Interview
+                                    Notes</h4>
+                                <div class="h-32 w-full border-2 border-dashed border-gray-200 rounded-md bg-gray-50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="mt-12 text-center text-xs text-gray-400 border-t pt-8">
+            Generated via JD2Q AI - High Performance Interview Tooling
+        </div>
+    </div>
+</body>
+
+</html>

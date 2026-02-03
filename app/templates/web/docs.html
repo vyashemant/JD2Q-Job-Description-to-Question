@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation - JD2Q Protocol{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="mb-16">
+        <h1 class="text-4xl font-black text-white mb-4 tracking-tight">System Documentation</h1>
+        <p class="text-slate-400 font-medium">Technical guide for the JD2Q Interview Intelligence Pipeline.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <!-- Sidebar Navigation -->
+        <aside class="hidden lg:block space-y-4 sticky top-32 h-fit">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6">Index Protocols</p>
+            <nav class="flex flex-col gap-2">
+                <a href="#overview" class="text-sm font-bold text-slate-400 hover:text-indigo-400 transition-colors">01
+                    Overiew</a>
+                <a href="#onboarding"
+                    class="text-sm font-bold text-slate-400 hover:text-indigo-400 transition-colors">02 Onboarding</a>
+                <a href="#generation"
+                    class="text-sm font-bold text-slate-400 hover:text-indigo-400 transition-colors">03 Generation</a>
+                <a href="#security" class="text-sm font-bold text-slate-400 hover:text-indigo-400 transition-colors">04
+                    Security</a>
+                <a href="#stack" class="text-sm font-bold text-slate-400 hover:text-indigo-400 transition-colors">05
+                    Stack</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-3 space-y-24">
+
+            <section id="overview" class="scroll-mt-32">
+                <h2 class="text-2xl font-bold text-white mb-6">01 Overview</h2>
+                <div class="prose prose-invert prose-slate max-w-none">
+                    <p class="text-slate-300 leading-relaxed">
+                        JD2Q is a specialized pipeline designed to bridge the gap between static job descriptions and
+                        dynamic interview preparation.
+                        By utilizing the Gemini 2.0 architecture, the system extracts high-value semantic signals to
+                        generate balanced question sets
+                        covering technical depth and behavioral intelligence.
+                    </p>
+                </div>
+            </section>
+
+            <section id="onboarding" class="scroll-mt-32">
+                <h2 class="text-2xl font-bold text-white mb-8 pr-4 border-l-4 border-indigo-500 pl-6">02 Onboarding
+                    Sequence</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="glass-card p-6 rounded-2xl border border-white/5 bg-white/5">
+                        <span class="text-[10px] font-black text-indigo-400 mb-2 block uppercase tracking-tighter">Step
+                            A</span>
+                        <p class="text-sm text-slate-300 font-bold">Authentication</p>
+                        <p class="text-xs text-slate-500 mt-2">Initialize access via Google OAuth or OTP-based
+                            verification.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-white/5 bg-white/5">
+                        <span class="text-[10px] font-black text-indigo-400 mb-2 block uppercase tracking-tighter">Step
+                            B</span>
+                        <p class="text-sm text-slate-300 font-bold">Key Integration</p>
+                        <p class="text-xs text-slate-500 mt-2">Add your Google AI Studio API credentials to the secure
+                            vault.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-white/5 bg-white/5">
+                        <span class="text-[10px] font-black text-indigo-400 mb-2 block uppercase tracking-tighter">Step
+                            C</span>
+                        <p class="text-sm text-slate-300 font-bold">Context Submission</p>
+                        <p class="text-xs text-slate-500 mt-2">Paste raw job description text for initial parsing.</p>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl border border-white/5 bg-white/5">
+                        <span class="text-[10px] font-black text-indigo-400 mb-2 block uppercase tracking-tighter">Step
+                            D</span>
+                        <p class="text-sm text-slate-300 font-bold">Synthesis</p>
+                        <p class="text-xs text-slate-500 mt-2">Generate and refine question matrices based on role
+                            seniority.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="generation" class="scroll-mt-32">
+                <h2 class="text-2xl font-bold text-white mb-6">03 Generation Logic</h2>
+                <div class="space-y-6">
+                    <div class="bg-white/5 rounded-2xl p-8 border border-white/5">
+                        <h3 class="text-lg font-bold text-white mb-4">Core Constraints</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-4 text-sm text-slate-400">
+                                <span class="text-indigo-500 font-mono text-xs">01</span>
+                                1,500 word threshold for raw JD input.
+                            </li>
+                            <li class="flex items-center gap-4 text-sm text-slate-400">
+                                <span class="text-indigo-500 font-mono text-xs">02</span>
+                                Structured output ensuring at least 15 balanced questions.
+                            </li>
+                            <li class="flex items-center gap-4 text-sm text-slate-400">
+                                <span class="text-indigo-500 font-mono text-xs">03</span>
+                                Context-aware regeneration (Duplicate suppression).
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 flex gap-4">
+                        <svg class="w-6 h-6 text-amber-500 shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <p class="text-xs text-amber-200/80 leading-relaxed">
+                            <span class="font-bold text-amber-400">Note:</span> AI outputs should be reviewed for
+                            brand-specific alignment. Use "Generate Answer" for baseline reference signals.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="security" class="scroll-mt-32">
+                <h2 class="text-2xl font-bold text-white mb-6">04 Security Protocols</h2>
+                <div class="glass-card p-1 rounded-2xl border border-white/5 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-white/5">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                        Protocol Area</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                        Mechanism</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <tr>
+                                    <td class="px-6 py-4 text-xs font-bold text-white">API Key Storage</td>
+                                    <td class="px-6 py-4 text-xs text-slate-400">AES-256 Symmetric Encryption (Fernet)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 text-xs font-bold text-white">Auth Sessions</td>
+                                    <td class="px-6 py-4 text-xs text-slate-400">Supabase JWT + Session-locked Cookies
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 text-xs font-bold text-white">Rate Limits</td>
+                                    <td class="px-6 py-4 text-xs text-slate-400">Redis-based burst protection (50
+                                        req/min)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="stack" class="scroll-mt-32">
+                <h2 class="text-2xl font-bold text-white mb-6">05 Static Architecture</h2>
+                <div class="bg-black/40 rounded-2xl p-8 border border-white/5 font-mono text-sm leading-relaxed">
+                    <div class="flex gap-4 mb-2">
+                        <span class="text-slate-600">01</span>
+                        <span class="text-indigo-400">Backend:</span><span class="text-white"> Flask Cluster (Python
+                            3.11)</span>
+                    </div>
+                    <div class="flex gap-4 mb-2">
+                        <span class="text-slate-600">02</span>
+                        <span class="text-indigo-400">Intelligence:</span><span class="text-white"> Gemini 2.0 Flash /
+                            Pro</span>
+                    </div>
+                    <div class="flex gap-4 mb-2">
+                        <span class="text-slate-600">03</span>
+                        <span class="text-indigo-400">Database:</span><span class="text-white"> PostgreSQL (Managed by
+                            Supabase)</span>
+                    </div>
+                    <div class="flex gap-4 mb-2">
+                        <span class="text-slate-600">04</span>
+                        <span class="text-indigo-400">UI System:</span><span class="text-white"> Tailwind CSS Core +
+                            Glassmorphism</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <span class="text-slate-600">05</span>
+                        <span class="text-indigo-400">Deployment:</span><span class="text-white"> Vercel Pulse V2</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="pt-12 text-center border-t border-white/5">
+                <p class="text-slate-600 text-[10px] font-black uppercase tracking-[0.4em]">End of Protocol &bull; Rev
+                    2.0.4</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

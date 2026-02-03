@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}View Generation - JD2Q{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <a href="{{ url_for('history.index') }}"
+                class="text-indigo-400 hover:text-indigo-300 text-sm font-semibold flex items-center mb-3 transition-colors">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to History
+            </a>
+            <h1 class="text-3xl font-bold text-white">Generation Details</h1>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{{ url_for('history.export_json', gen_id=generation.id) }}"
+                class="px-4 py-2 border border-white/10 rounded-lg text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 transition-all">
+                JSON
+            </a>
+            <a href="{{ url_for('history.export_pdf', gen_id=generation.id) }}"
+                class="px-4 py-2 border border-white/10 rounded-lg text-sm font-medium text-slate-300 bg-white/5 hover:bg-white/10 transition-all"
+                target="_blank">
+                Export PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="glass-card border border-white/5 p-8 rounded-xl mb-10 shadow-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Date</label>
+                <p class="text-white font-medium">{{ generation.created_at[:16] }}</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Level</label>
+                <p class="text-white font-medium">{{ generation.role_level }}</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                <label
+                    class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Questions</label>
+                <p class="text-white font-medium">{{ total_questions }} Qs</p>
+            </div>
+        </div>
+        <div class="mt-8 border-t border-white/5 pt-8">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Job Description
+                Snippet</label>
+            <div
+                class="text-sm text-slate-400 bg-black/20 p-5 rounded-xl border border-white/5 leading-relaxed font-mono">
+                {{ generation.job_description[:800] }}{% if generation.job_description|length > 800 %}...{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="space-y-12">
+        {% for section in sections %}
+        <div>
+            <div class="flex items-center mb-8">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 mr-4 shadow-[0_0_12px_rgba(99,102,241,0.5)]"></span>
+                <h2 class="text-xl font-bold text-white">{{ section.title }}</h2>
+                <div class="flex-grow ml-6 h-px bg-white/5"></div>
+            </div>
+
+            <div class="space-y-6">
+                {% for question in section.questions %}
+                <div class="bg-white/5 border border-white/5 rounded-xl p-6 hover:border-white/10 transition-colors">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-2">
+                            <span
+                                class="px-2 py-0.5 text-[10px] uppercase font-bold rounded bg-white/5 text-slate-500 border border-white/5">{{
+                                question.question_type or 'General' }}</span>
+                            <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded border 
+                                {% if question.difficulty == 'Senior' %}bg-red-500/10 text-red-400 border-red-500/20
+                                {% elif question.difficulty == 'Mid-level' %}bg-yellow-500/10 text-yellow-400 border-yellow-500/20
+                                {% else %}bg-green-500/10 text-green-400 border-green-500/20{% endif %}">
+                                {{ question.difficulty or 'Standard' }}
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-white font-medium text-lg leading-relaxed mb-4">{{ question.question_text }}</p>
+
+                    {% if question.generated_answer %}
+                    <div class="mt-6 p-5 bg-indigo-500/5 rounded-xl border border-indigo-500/10 text-sm">
+                        <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">Saved Answer</p>
+                        <div class="text-slate-300 leading-relaxed whitespace-pre-wrap">{{ question.generated_answer }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

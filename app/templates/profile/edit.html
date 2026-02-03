@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Reconfiguration // JD2Q{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-6 py-20 reveal">
+    <header class="mb-12">
+        <div class="mono text-[10px] uppercase tracking-[0.3em] text-indigo-400 mb-4 font-bold flex items-center">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
+            Identity Reconfiguration // Modification Mode
+        </div>
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2">Edit Credentials</h1>
+        <p class="text-slate-400 max-w-lg">Modify your platform identity and communication parameters.</p>
+    </header>
+
+    <div class="glass-card shadow-2xl rounded-2xl overflow-hidden border border-white/5">
+        <div class="p-8 md:p-12">
+            <form method="POST" action="{{ url_for('profile.edit') }}" class="space-y-10">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+                <!-- Identifier Status -->
+                <div class="space-y-4">
+                    <label class="mono text-[11px] uppercase tracking-widest text-slate-500 font-bold block">
+                        Permanent Digital Address
+                    </label>
+                    <div class="relative">
+                        <input type="email" value="{{ user.email }}" readonly
+                            class="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-4 text-slate-500 cursor-not-allowed font-mono text-sm tracking-wider"
+                            disabled>
+                        <div class="absolute inset-y-0 right-4 flex items-center">
+                            <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-600 mono italic uppercase tracking-widest">Locked: Primary auth
+                        identifier cannot be modified.</p>
+                </div>
+
+                <!-- Display Alias -->
+                <div class="space-y-4">
+                    <label for="display_name"
+                        class="mono text-[11px] uppercase tracking-widest text-slate-500 font-bold block">
+                        Designative Alias
+                    </label>
+                    <input type="text" id="display_name" name="display_name" value="{{ user.display_name or '' }}"
+                        class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 text-white placeholder-slate-600 transition-all outline-none"
+                        placeholder="Assign a system name...">
+                    <p class="text-[11px] text-slate-500 mono italic">This alias will be used for all internal
+                        communications and dashboard logs.</p>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6 mt-6 border-t border-white/5">
+                    <button type="submit"
+                        class="flex-1 bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group">
+                        Commit Modifications
+                        <svg class="w-4 h-4 group-hover:translate-y-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <a href="{{ url_for('profile.view') }}"
+                        class="px-8 bg-white/5 text-slate-300 font-bold py-4 rounded-xl hover:bg-white/10 transition-all text-center mono text-xs uppercase tracking-widest border border-white/5">
+                        Cancel Sequence
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .mono {
+        font-family: 'Space Mono', 'Fira Code', monospace;
+    }
+</style>
+{% endblock %}
